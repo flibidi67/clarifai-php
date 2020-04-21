@@ -14,35 +14,9 @@ class ClientTest extends TestCase
     {
         $httpClient = $this->getHttpClientMock();
 
-        $client = new Client($httpClient, 'client-id', 'client-secret');
+        $client = new Client($httpClient, 'client-id');
 
         $this->assertInstanceOf(Client::class, $client);
-    }
-
-    /** @test */
-    function can_retrieve_an_access_token()
-    {
-        $httpClient = $this->getHttpClientMock();
-        $httpClient
-            ->shouldReceive('request')
-            ->with('POST', 'https://api.clarifai.com/v2/token', [
-                'headers' => [
-                    'Accept' => 'application/json',
-                    'Content-Type' => 'application/json',
-                ],
-                'auth' => ['client-id', 'client-secret'],
-            ])
-            ->andReturn($httpClient);
-
-            $httpClient
-                ->shouldReceive('getBody')
-                ->andReturn(json_encode(['foo' => 'bar']));
-
-        $client = new Client($httpClient, 'client-id', 'client-secret');
-
-        $response = $client->accessToken();
-
-        $this->assertEquals(['foo' => 'bar'], $response);
     }
 
     /** @test */
@@ -62,9 +36,9 @@ class ClientTest extends TestCase
             ]
         );
 
-        $client = new Client($httpClient, 'client-id', 'client-secret');
+        $client = new Client($httpClient, 'client-id');
 
-        $response = $client->withAccessToken('access-token')->predict([
+        $response = $client->predict([
             'https://samples.clarifai.com/metro-north.jpg',
         ]);
 
@@ -91,9 +65,9 @@ class ClientTest extends TestCase
             ]
         );
 
-        $client = new Client($httpClient, 'client-id', 'client-secret');
+        $client = new Client($httpClient, 'client-id');
 
-        $response = $client->withAccessToken('access-token')->predict([
+        $response = $client->predict([
             'https://samples.clarifai.com/metro-north.jpg',
         ]);
 
@@ -120,9 +94,9 @@ class ClientTest extends TestCase
             ]
         );
 
-        $client = new Client($httpClient, 'client-id', 'client-secret');
+        $client = new Client($httpClient, 'client-id');
 
-        $response = $client->withAccessToken('access-token')->predict([
+        $response = $client->predict([
             'https://samples.clarifai.com/metro-north.jpg',
         ], Models::FOOD);
 
@@ -145,7 +119,7 @@ class ClientTest extends TestCase
                 'headers' => [
                     'Accept' => 'application/json',
                     'Content-Type' => 'application/json',
-                    'Authorization' => 'Bearer access-token',
+                    'Authorization' => 'Key client-id',
                 ],
                 'json' => [
                     'inputs' => $inputs
